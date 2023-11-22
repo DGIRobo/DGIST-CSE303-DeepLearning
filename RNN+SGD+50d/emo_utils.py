@@ -44,7 +44,7 @@ emoji_dictionary = {"0": "\u2764\uFE0F",    # :heart: prints a black instead of 
                     "1": ":baseball:",
                     "2": ":smile:",
                     "3": ":disappointed:",
-                    "4": ":fork_and_knife:"}
+                    "4": "\U0001F374"}
 
 def label_to_emoji(label):
     """

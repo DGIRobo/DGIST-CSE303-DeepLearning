@@ -101,7 +101,10 @@ for step in range(len(XY_tset)):
     label = XY_tset[step][1]
     beforeSoftMax = LSTM.forward(input)
     probability = LSTM.SoftMax(beforeSoftMax)
-    predictionDatas.append([input, label, probability])
+    string = np.reshape(input, (1, 10))[0].tolist()
+    while '0' in string:
+        string.remove('0')
+    predictionDatas.append([' '.join(string), label.tolist().index(max(label.tolist())), probability.tolist().index(max(probability.tolist()))])
     actualNumber = list(np.transpose(label)[0]).index(1)
     predictionNumber = list(np.transpose(probability)[0]).index(max(list(np.transpose(probability)[0])))
     #Confusion Matrix Preprocessing
@@ -130,14 +133,21 @@ plt.title('Confusion Matrix of LSTM')
 plt.savefig('ConfusionMatrix.png', dpi=300)
 
 # Prediction Table Plot 
-plt.figure()
-cm = np.round(confusion_matrix(actualCM, predictionCM), 2)
-sns.heatmap(cm, annot=True, cmap='Blues')
-plt.xlabel('Predicted')
-plt.ylabel('True')
-plt.title('Prediction Table of LSTM')
+fig, ax = plt.subplots(1,1)
+column_labels = ["String", "True Value", "Prediction Value"]
+ax.axis("tight")
+ax.axis("off")
+ax.table(cellText=predictionDatas, colLabels=column_labels, loc="center")
 #plt.show()
-plt.savefig('PredictionTable.png', dpi=300)
+plt.savefig('PredictionTable.png', bbox_inches = 'tight', dpi=400)
+f = open("PredictionResults.txt", "w", encoding='UTF-8')
+for i in range(len(predictionDatas)):
+    predictionDatas[i][1] = emo_utils.label_to_emoji(predictionDatas[i][1])
+    predictionDatas[i][2] = emo_utils.label_to_emoji(predictionDatas[i][2])
+    print(predictionDatas[i][0], file=f)
+    print(predictionDatas[i][1], file=f)
+    print(predictionDatas[i][2], file=f)
+f.close()
 
 # Top 3 Data Plot
 plt.figure(figsize=(12,5))
